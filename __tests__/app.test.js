@@ -28,9 +28,9 @@ describe("GET /api/topics", () => {
         return request(app)
         .get("/api/topics")
         .expect(200)
-        .then(({ body: { topics } }) => {
-            expect(topics).toHaveLength(3)
-            topics.forEach( (topic, index) => {
+        .then(({ body }) => {
+            expect(body).toHaveLength(3)
+            body.forEach( (topic, index) => {
                 expect(topic.description).toEqual(data.topicData[index].description)
                 expect(topic.slug).toEqual(data.topicData[index].slug)
             })

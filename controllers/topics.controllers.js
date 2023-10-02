@@ -1,12 +1,9 @@
 const { fetchTopics } = require("../models/topics.models")
 
 
-exports.getTopics = (req, res, next) => {
+exports.getTopics = (req, res) => {
     fetchTopics()
     .then( (result) => {
-        if (result.status === 200) res.status(200).send( { topics: result.topics })
-        else return Promise.reject(result)
+        res.status(result.status).send( result.topics )
     })
-    .catch( (err) => {
-        next(err)})
 }
