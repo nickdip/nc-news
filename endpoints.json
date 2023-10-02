@@ -25,5 +25,7 @@
         }
       ]
     }
-  }
+  },
+  "GET /api/articles/:article_id": "get an article by its id",
+  "queries": []
 }

@@ -51,4 +51,18 @@ describe("GET /api", () => {
 })
 
 })
+
+describe("GET /api/articles/:article_id", () => { 
+    test("status:200, responds witn article with a given id", () => {
+        return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then( ( { body }) => {
+            console.log(body)
+            console.log(data.articleData[0])
+            expect(body).toEqual()
+        })
+})
+
+})
     
