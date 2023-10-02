@@ -3,13 +3,13 @@ const app = express()
 
 const controllers = require("./controllers/index.controllers")
 
-app.use((req, res, next) => {
-    validPaths = ["/api/topics"]
-    if (!validPaths.includes(req.path)) res.status(404).send({ msg: "Path not found" })
-    //console.log("HELLO")
-    next()
+app.get("/api/topics", controllers.topics.getTopics)
+
+app.get("/api", controllers.api.getDiscriptions)
+
+app.all("*", (req, res) => {
+    res.status(404).send({ msg: "Path not found"})
 })
 
-app.get("/api/topics", controllers.topics.getTopics)
 
 module.exports = app
