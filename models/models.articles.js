@@ -6,8 +6,8 @@ exports.fetchArticleById = (articleId) => {
         if (!rows.length) return { status: 404, msg: "Article not found" }
         return { article: rows[0] }
      })
-    .catch( (err) => {
-        return { code: "22P02", msg: "Invalid article_id"} 
+    .catch( () => {
+        return { code: "22P02", msg: "Invalid article_id" } 
     })
 
 }
