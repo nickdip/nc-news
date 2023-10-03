@@ -194,6 +194,7 @@ describe("PATCH /api/articles/:article_id", () => {
         .send({ inc_votes: 1 })
         .expect(200)
         .then( ( { body: { article } } ) => {
+            console.log(article)
             expect(article.votes).toBe(101)
         })
     })
