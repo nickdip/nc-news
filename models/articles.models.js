@@ -32,7 +32,7 @@ exports.fetchCommentsByArticleId = (articleId) => {
         if (!rows.length) return Promise.reject({status: 404, msg: "Article not found"})
         return { comments: rows }
     })
-
+}
 
 exports.updateArticleById = (articleId, inc_votes) => {
     return db.query('UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;', [inc_votes, articleId])

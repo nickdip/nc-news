@@ -82,7 +82,7 @@ describe("GET /api/articles/:article_id", () => {
         .get("/api/articles/what")
         .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Invalid database input")
+            expect(msg).toBe("PSQL Error inserting data")
         })
         })
 
@@ -183,7 +183,7 @@ describe("GET /api/articles/:articleid/comments", () => {
         .get("/api/articles/northcoders/comments")
         .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Invalid database input")
+            expect(msg).toBe("PSQL Error inserting data")
         })})
 })
 
@@ -211,25 +211,25 @@ describe("POST /api/articles/:article_id/comments", () => {
         .send({ username: "rogersop", body: "test comment"})
         .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Invalid article_id")
+            expect(msg).toBe("PSQL Error inserting data")
         })
     })
-    test("status:404, article not found", () => {
+    test("status:400, article id not in database", () => {
         return request(app) 
         .post("/api/articles/400/comments")     
         .send({ username: "rogersop", body: "test comment"})
-        .expect(404)
+        .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Error inserting data")
+            expect(msg).toBe("PSQL Error inserting data")
         })})
   
-    test("status: 404, username not found", () => {
+    test("status: 400, username not found", () => {
         return request(app)
         .post("/api/articles/1/comments")  
         .send({ username: "nickdip", body: "test comment"})
-        .expect(404)
+        .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Error inserting data")
+            expect(msg).toBe("PSQL Error inserting data")
         })}
     )
 
@@ -254,10 +254,9 @@ describe("DELETE /api/comments/:comment_id", () => {
         .delete("/api/comments/northcoders")
         .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Invalid comment_id")
+            expect(msg).toBe("PSQL Error inserting data")
         })
     })
-})
 })
 
 
@@ -282,7 +281,6 @@ describe("PATCH /api/articles/:article_id", () => {
         .send({ inc_votes: 1 })
         .expect(200)
         .then( ( { body: { article } } ) => {
-            console.log(article)
             expect(article.votes).toBe(101)
         })
     })
@@ -303,7 +301,7 @@ describe("PATCH /api/articles/:article_id", () => {
         .send({ inc_votes: "a" })
         .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Invalid database input")
+            expect(msg).toBe( "PSQL Error inserting data")
         })
     })
     test("400: object has more than one key", () => {
@@ -316,4 +314,4 @@ describe("PATCH /api/articles/:article_id", () => {
         })
         })
 
-
+    })

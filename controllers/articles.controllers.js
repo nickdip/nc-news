@@ -19,9 +19,7 @@ exports.getArticles = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
     fetchCommentsByArticleId(req.params.article_id).then( (result) => {
         return res.status(200).send(result)})
-      .catch( (err) => next({ msg: "Invalid article_id",
-                            ...err
-                            }))
+      .catch( (err) => next(err))
 }
 
 
