@@ -25,12 +25,21 @@ exports.insertComment = ({ username, article_id, votes, created_at, body}) => {
 }
 
 
+
 exports.fetchCommentsByArticleId = (articleId) => {
     return db.query(`SELECT * FROM comments
                     WHERE article_id = $1
                     ORDER BY created_at DESC;`, [articleId]).then( ( { rows }) => {
         if (!rows.length) return Promise.reject({status: 404, msg: "Article not found"})
         return { comments: rows }
+    })
+
+}
+
+exports.updateArticleById = (articleId, inc_votes) => {
+    return db.query('UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;', [inc_votes, articleId])
+    .then( ( { rows }) => {
+        return { article: rows[0] }
     })
 
 }

@@ -82,7 +82,7 @@ describe("GET /api/articles/:article_id", () => {
         .get("/api/articles/what")
         .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Invalid article_id")
+            expect(msg).toBe("Invalid database input")
         })
         })
 
@@ -183,7 +183,7 @@ describe("GET /api/articles/:articleid/comments", () => {
         .get("/api/articles/northcoders/comments")
         .expect(400)
         .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Invalid article_id")
+            expect(msg).toBe("Invalid database input")
         })})
 })
 
@@ -233,3 +233,45 @@ describe("POST /api/articles/:article_id/comments", () => {
     )
 
 })
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("200: responds with updated article", () => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then( ( { body: { article } } ) => {
+            console.log(article)
+            expect(article.votes).toBe(101)
+        })
+    })
+
+    test("400: inc_votes key not found", () => {
+        return request(app)
+        .patch("/api/articles/2")
+        .send({ votes: 1 })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("inc_votes key not found")
+        })
+    })
+
+    test("400: inc_votes is not a valid number", () => {
+        return request(app)
+        .patch("/api/articles/2")
+        .send({ inc_votes: "a" })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid database input")
+        })
+    })
+    test("400: object has more than one key", () => {
+        return request(app)
+        .patch("/api/articles/2")
+        .send({ inc_votes: 1, name: "Nick" })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid object (must only have one key)")
+        })
+        })
+
