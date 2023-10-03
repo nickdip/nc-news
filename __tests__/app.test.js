@@ -186,3 +186,27 @@ describe("GET /api/articles/:articleid/comments", () => {
             expect(msg).toBe("Invalid article_id")
         })})
 })
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204: deletes comment with given comment_id", () => {
+        return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+    })
+    test("404: comment not found", () => {
+        return request(app)
+        .delete("/api/comments/999")
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Comment not found")
+        })})
+        
+    test("400: invalid comment_id", () => {
+        return request(app)
+        .delete("/api/comments/northcoders")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid comment_id")
+        })
+    })
+})

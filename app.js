@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 
-const { api, articles, errors, topics } = require("./controllers")
+const { api, articles, errors, topics, comments } = require("./controllers")
 
 app.get("/api/topics", topics.getTopics)
 
@@ -12,6 +12,8 @@ app.get("/api/articles/:article_id", articles.getArticleById)
 app.get("/api/articles/:article_id/comments", articles.getCommentsByArticleId)
 
 app.get("/api/articles", articles.getArticles)
+
+app.delete("/api/comments/:comment_id", comments.deleteCommentById)
 
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "Path not found"})
