@@ -186,3 +186,50 @@ describe("GET /api/articles/:articleid/comments", () => {
             expect(msg).toBe("Invalid article_id")
         })})
 })
+
+describe("POST /api/articles/:article_id/comments", () => {
+    test("status:201, responds with posted comment", () => {
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send({ username: "rogersop", body: "test comment"})
+        .expect(201)
+        .then( ( { body: { comment } } ) => {
+            expect(comment[0].comment_id).toBe(19)
+            expect(comment[0].body).toBe("test comment")
+            expect(comment[0].article_id).toBe(1)
+            expect(comment[0].author).toBe("rogersop")
+            expect(comment[0].votes).toBe(0)
+            const datePattern =  /20\d\d-\d\d-\d\d\w\d\d:\d\d:\d\d.\d\d\d\w/
+            expect(comment[0].created_at).toMatch(datePattern)
+        })
+
+    })
+
+    test("status:400, invalid article_id", () => {
+        return request(app)
+        .post("/api/articles/what/comments")
+        .send({ username: "rogersop", body: "test comment"})
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid article_id")
+        })
+    })
+    test("status:404, article not found", () => {
+        return request(app) 
+        .post("/api/articles/400/comments")     
+        .send({ username: "rogersop", body: "test comment"})
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Error inserting data")
+        })})
+    test("status: 404, username not found", () => {
+        return request(app)
+        .post("/api/articles/1/comments")  
+        .send({ username: "nickdip", body: "test comment"})
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Error inserting data")
+        })}
+    )
+
+})
