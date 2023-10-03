@@ -101,7 +101,6 @@ describe("GET /api/articles", () => {
             const articleIdOrder = [3, 6, 2, 12, 13, 5, 1, 9, 10, 4, 8, 11, 7]
             expect(articles).toHaveLength(13)
             expect(dates).toBeSorted({ descending: true })
-            console.log(articles)
             articles.forEach( (article, index) => {
                 expect(article).toHaveProperty("author")
                 expect(article).toHaveProperty("title")
