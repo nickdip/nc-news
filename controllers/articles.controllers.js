@@ -6,7 +6,9 @@ exports.getArticleById = (req, res, next) => {
         return res.status(200).send( result )
     })
     .catch( (err) => {
-        next(err)
+        next({ msg: "Invalid article_id",
+                            ...err
+                            })
     })
 }
 
@@ -16,9 +18,12 @@ exports.getArticles = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
     fetchCommentsByArticleId(req.params.article_id).then( (result) => {
-        return res.status(200).send(result)
-    }).catch( (err) => next(err) )
+        return res.status(200).send(result)})
+      .catch( (err) => next({ msg: "Invalid article_id",
+                            ...err
+                            }))
 }
+
 
 exports.patchArticleById = (req, res, next) => {
     if (!req.body.inc_votes) next({status: 400, msg: "inc_votes key not found"})

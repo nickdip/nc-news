@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 
-const { api, articles, errors, topics } = require("./controllers")
+const { api, articles, errors, topics, comments } = require("./controllers")
 
 app.use(express.json())
 
@@ -15,10 +15,12 @@ app.get("/api/articles/:article_id/comments", articles.getCommentsByArticleId)
 
 app.get("/api/articles", articles.getArticles)
 
+app.delete("/api/comments/:comment_id", comments.deleteCommentById)
 
 app.patch("/api/articles/:article_id", articles.patchArticleById)
 
 app.post("/api/articles/:article_id/comments", articles.postComment)
+
 
 app.use(errors.handleCustomErrors)
 app.use(errors.handlePSQLErrors)

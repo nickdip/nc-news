@@ -222,6 +222,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         .then( ( { body: { msg } } ) => {
             expect(msg).toBe("Error inserting data")
         })})
+  
     test("status: 404, username not found", () => {
         return request(app)
         .post("/api/articles/1/comments")  
@@ -232,6 +233,30 @@ describe("POST /api/articles/:article_id/comments", () => {
         })}
     )
 
+})
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204: deletes comment with given comment_id", () => {
+        return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+    })
+    test("404: comment not found", () => {
+        return request(app)
+        .delete("/api/comments/999")
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Comment not found")
+        })})
+        
+    test("400: invalid comment_id", () => {
+        return request(app)
+        .delete("/api/comments/northcoders")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid comment_id")
+        })
+    })
 })
 
 describe("PATCH /api/articles/:article_id", () => {
@@ -274,4 +299,5 @@ describe("PATCH /api/articles/:article_id", () => {
             expect(msg).toBe("Invalid object (must only have one key)")
         })
         })
+
 
