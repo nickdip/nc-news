@@ -90,3 +90,29 @@ describe("GET /api/articles/:article_id", () => {
 
 
 })
+
+describe("GET /api/articles", () => {
+    test("status:200, responds with an array of article objects", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then( ( { body: { articles } } ) => {
+            dates = articles.map( (article) => article.created_at = Date.parse(article.created_at ))
+            const articleIdOrder = [3, 6, 2, 12, 13, 5, 1, 9, 10, 4, 8, 11, 7]
+            expect(articles).toHaveLength(13)
+            expect(dates).toBeSorted({ descending: true })
+            articles.forEach( (article, index) => {
+                expect(article).toHaveProperty("author")
+                expect(article).toHaveProperty("title")
+                expect(article).toHaveProperty("article_id")
+                expect(article).toHaveProperty("topic")
+                expect(article).toHaveProperty("created_at")
+                expect(article).toHaveProperty("votes")
+                expect(article).toHaveProperty("comment_count")
+                expect(article).not.toHaveProperty("body")
+                expect(article.article_id).toBe(articleIdOrder[index])
+            })
+            
+    })
+
+    })})

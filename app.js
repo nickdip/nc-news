@@ -9,16 +9,18 @@ app.get("/api", api.getDiscriptions)
 
 app.get("/api/articles/:article_id", articles.getArticleById)
 
-
-app.use(errors.handleCustomErrors)
-app.use(errors.handlePSQLErrors)
-app.use(errors.handle500Errors)
+app.get("/api/articles/", articles.getArticles)
 
 
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "Path not found"})
 })
 
+
+
+app.use(errors.handleCustomErrors)
+app.use(errors.handlePSQLErrors)
+app.use(errors.handle500Errors)
 
 
 module.exports = app
