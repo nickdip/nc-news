@@ -1,9 +1,11 @@
 const express = require("express")
 const app = express()
 
-const { api, articles, errors, topics, comments } = require("./controllers")
+
+const { api, articles, errors, topics, comments, users } = require("./controllers")
 
 app.use(express.json())
+
 
 app.get("/api/topics", topics.getTopics)
 
@@ -14,6 +16,8 @@ app.get("/api/articles/:article_id", articles.getArticleById)
 app.get("/api/articles/:article_id/comments", articles.getCommentsByArticleId)
 
 app.get("/api/articles", articles.getArticles)
+
+app.get("/api/users", users.getUsers)
 
 app.delete("/api/comments/:comment_id", comments.deleteCommentById)
 

@@ -248,7 +248,7 @@ describe("DELETE /api/comments/:comment_id", () => {
         .then( ( { body: { msg } } ) => {
             expect(msg).toBe("Comment not found")
         })})
-        
+  
     test("400: invalid comment_id", () => {
         return request(app)
         .delete("/api/comments/northcoders")
@@ -258,6 +258,22 @@ describe("DELETE /api/comments/:comment_id", () => {
         })
     })
 })
+})
+
+
+describe("GET /api/users", () => {
+    
+    test("200: responds with an array of users", () => {
+        return request(app)
+        .get("/api/users/")
+        .expect(200)
+        .then( ( { body: { users} } ) => {
+            expect(users).toEqual(data.userData)
+        })
+    })
+
+})
+        
 
 describe("PATCH /api/articles/:article_id", () => {
     test("200: responds with updated article", () => {
