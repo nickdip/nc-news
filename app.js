@@ -15,8 +15,10 @@ app.get("/api/articles/:article_id/comments", articles.getCommentsByArticleId)
 
 app.get("/api/articles", articles.getArticles)
 
+
 app.patch("/api/articles/:article_id", articles.patchArticleById)
 
+app.post("/api/articles/:article_id/comments", articles.postComment)
 
 app.use(errors.handleCustomErrors)
 app.use(errors.handlePSQLErrors)

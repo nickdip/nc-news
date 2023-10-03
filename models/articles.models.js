@@ -25,7 +25,8 @@ exports.insertComment = ({ username, article_id, votes, created_at, body}) => {
 }
 
 
-exports.fetchCommentsByArticleId = (articleId, sort_by, order) => {
+
+exports.fetchCommentsByArticleId = (articleId) => {
     return db.query(`SELECT * FROM comments
                     WHERE article_id = $1
                     ORDER BY created_at DESC;`, [articleId]).then( ( { rows }) => {

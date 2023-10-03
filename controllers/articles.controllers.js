@@ -1,5 +1,5 @@
 
-const { fetchArticleById, fetchArticles, fetchCommentsByArticleId, updateArticleById } = require('../models/articles.models')
+const { fetchArticleById, fetchArticles, fetchCommentsByArticleId, updateArticleById, insertComment } = require('../models/articles.models')
 
 exports.getArticleById = (req, res, next) => {
     fetchArticleById(req.params.article_id).then( ( result ) => {
@@ -28,3 +28,17 @@ exports.patchArticleById = (req, res, next) => {
     })
     .catch( (err) => next(err) )
 }
+
+exports.postComment = (req, res, next) => {
+    const newComment = req.body
+    newComment.article_id = req.params.article_id
+    newComment.created_at = new Date()
+    newComment.votes = 0
+    insertComment(newComment).then( (result) => {
+        res.status(201).send(result)
+    })
+    .catch( (err) => {
+        next(err)
+    })
+}
+
