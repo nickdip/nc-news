@@ -117,6 +117,76 @@ describe("GET /api/articles", () => {
 
     })})
 
+describe("GET /api/articles", () => {
+    test("status:200, responds with an array of article objects", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then( ( { body: { articles } } ) => {
+            dates = articles.map( (article) => article.created_at = Date.parse(article.created_at ))
+            const articleIdOrder = [3, 6, 2, 12, 13, 5, 1, 9, 10, 4, 8, 11, 7]
+            expect(articles).toHaveLength(13)
+            expect(dates).toBeSorted({ descending: true })
+            articles.forEach( (article, index) => {
+                expect(article).toHaveProperty("author")
+                expect(article).toHaveProperty("title")
+                expect(article).toHaveProperty("article_id")
+                expect(article).toHaveProperty("topic")
+                expect(article).toHaveProperty("created_at")
+                expect(article).toHaveProperty("votes")
+                expect(article).toHaveProperty("comment_count")
+                expect(article).not.toHaveProperty("body")
+                expect(article.article_id).toBe(articleIdOrder[index])
+            })
+            
+    })
+
+    })})
+
+describe("GET /api/articles/:articleid/comments", () => {
+    test("200: responds with an array of comments for a given article_id", () => {
+        return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then( ( { body: { comments } } ) => {
+            expected =  [
+                        {
+                        comment_id: 11,
+                        body: 'Ambidextrous marsupial',
+                        article_id: 3,
+                        author: 'icellusedkars',
+                        votes: 0,
+                        created_at: '2020-09-19T23:10:00.000Z'
+                        },
+                        {
+                        comment_id: 10,
+                        body: 'git push origin master',
+                        article_id: 3,
+                        author: 'icellusedkars',
+                        votes: 0,
+                        created_at: '2020-06-20T07:24:00.000Z'
+                        }
+                    ]
+            expect(comments).toHaveLength(2)
+            expect(comments).toEqual(expected)
+        })
+    })
+    test("404: article not found", () => {
+        return request(app)
+        .get("/api/articles/999/comments")
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Article not found")
+        })})
+    test("400: invalid article_id", () => {
+        return request(app)
+        .get("/api/articles/northcoders/comments")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid article_id")
+        })})
+})
+
 describe("POST /api/articles/:article_id/comments", () => {
     test("status:201, responds with posted comment", () => {
         return request(app)
