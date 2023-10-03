@@ -186,3 +186,17 @@ describe("GET /api/articles/:articleid/comments", () => {
             expect(msg).toBe("Invalid article_id")
         })})
 })
+
+
+describe("GET /api/users", () => {
+    
+    test("200: responds with an array of users", () => {
+        return request(app)
+        .get("/api/users/")
+        .expect(200)
+        .then( ( { body: { users} } ) => {
+            expect(users).toEqual(data.userData)
+        })
+    })
+
+})
