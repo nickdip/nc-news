@@ -4,7 +4,7 @@ const data = require("../db/data/test-data")
 const seed = require("../db/seeds/seed")
 const app = require("../app")
 const { readFile } = require('fs').promises
-
+const { convertTimestampToDate } = require('../db/seeds/utils');
 
 beforeEach(() => seed(data))
 
@@ -49,6 +49,45 @@ describe("GET /api", () => {
             })
         })
 })
+
+})
+
+describe("GET /api/articles/:article_id", () => { 
+    test("status:200, responds witn article with a given id", () => {
+        return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then( ( { body: { article } }) => {
+            testArticle = data.articleData[0]
+            testArticle.created_at = "2020-07-09T20:11:00.000Z"
+            console.log(testArticle)
+            expect(article).toEqual( { 
+                                    article_id: 1,
+                                    ...testArticle
+                                })
+        })
+    })
+
+    test("status: 404, article not found", () => {
+        return request(app)
+        .get("/api/articles/999")
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Article not found")
+        })
+        })
+
+    test("status: 400: invalid article_id", () => {
+        return request(app)
+        .get("/api/articles/what")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid article_id")
+        })
+        })
+
+
+
 
 })
     
