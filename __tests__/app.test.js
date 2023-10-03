@@ -327,7 +327,7 @@ describe("GET /api/articles (topic query)", () => {
         })
     })
 
-    test.only("404: responds with an empty array if topic has no articles", () => {
+    test("404: responds with an empty array if topic has no articles", () => {
         return request(app)
         .get("/api/articles?topic=viscount")
         .expect(404)
