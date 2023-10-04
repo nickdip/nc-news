@@ -321,6 +321,39 @@ describe("PATCH /api/articles/:article_id", () => {
 
     })
 
+describe("GET /api/articles (topic query)", () => {
+    test("200: responds with an array of articles filtered by topic", () => {
+        return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)   
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toHaveLength(12)
+            articles.forEach( (article) => {
+                expect(article.topic).toBe("mitch")
+            })
+
+        })
+    })
+
+    test("200: responds with an an empty array if a valid topic has no associated articles", () => {
+        return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)   
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toEqual([])
+        })
+    })
+
+    test("404: responds with an empty array if topic has no articles", () => {
+        return request(app)
+        .get("/api/articles?topic=viscount")
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Topic not found")
+        })
+    })
+
+
 describe("NEW FEATURE: get comment_count from article_id", () => {
     test("200: responds with the article comment_count", () => {
         return request(app)
@@ -330,5 +363,4 @@ describe("NEW FEATURE: get comment_count from article_id", () => {
             expect(article.comment_count).toBe("11")
         })
     })
-
 })
