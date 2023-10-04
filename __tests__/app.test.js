@@ -53,7 +53,7 @@ describe("GET /api", () => {
 
 })
 
-describe.only("GET /api/articles/:article_id", () => { 
+describe("GET /api/articles/:article_id", () => { 
     test("status:200, responds with article with a given id", () => {
         return request(app)
         .get("/api/articles/1")
@@ -61,9 +61,15 @@ describe.only("GET /api/articles/:article_id", () => {
         .then( ( { body: { article } }) => {
             testArticle = data.articleData[0]
             testArticle.created_at = "2020-07-09T20:11:00.000Z"
-            testArticle.comment_count = "11"
             testArticle.article_id = 1
-            expect(article).toEqual(testArticle)
+            expect(article.article_id).toBe(testArticle.article_id)
+            expect(article.title).toBe(testArticle.title)
+            expect(article.body).toBe(testArticle.body)
+            expect(article.votes).toBe(testArticle.votes)
+            expect(article.topic).toBe(testArticle.topic)
+            expect(article.author).toBe(testArticle.author)
+            expect(article.created_at).toBe(testArticle.created_at)
+            
         })
     })
 
@@ -314,3 +320,15 @@ describe("PATCH /api/articles/:article_id", () => {
         })
 
     })
+
+describe("NEW FEATURE: get comment_count from article_id", () => {
+    test("200: responds with the article comment_count", () => {
+        return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then( ( { body: { article } }) => {
+            expect(article.comment_count).toBe("11")
+        })
+    })
+
+})
