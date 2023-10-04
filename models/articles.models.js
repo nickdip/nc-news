@@ -13,30 +13,53 @@ exports.fetchArticleById = (articleId) => {
         return { article: rows[0] }
     })}
 
-exports.fetchArticles = (userQuery) => {
+exports.fetchArticles = async (userQuery) => {
+
+    function topicQuery() {
+        if (userQuery.topic) {
+            if (!validTopics.includes(userQuery.topic)) return Promise.reject({status: 404, msg: "Topic not found"})
+            psqlQuery += ` WHERE topic = $1 `
+            params.push(userQuery.topic)
+        }
+        psqlQuery += `GROUP BY articles.article_id`
+        return Promise.resolve()
+    } 
+
+
+    function sortbyQuery() {
+        if (userQuery.sort_by) {
+            if (!validSortBy.includes(userQuery.sort_by)) return Promise.reject({status: 400, msg: "Invalid sort_by query"})
+            psqlQuery += ` ORDER BY ${userQuery.sort_by} `
+        }
+        return Promise.resolve()
+    }
+    function orderQuery() {
+        if (userQuery.order) {
+            if (userQuery.order !== 'asc' && userQuery.order !== 'desc') return Promise.reject({status: 400, msg: "Invalid order query"})
+            psqlQuery += ` ${userQuery.order} `
+        }
+        return Promise.resolve()
+    }
+
 
     validTopics = data.topicData.map( (topic) => topic.slug)
+    validSortBy = Object.keys(data.articleData[0])
 
-    const values = userQuery.topic ? [userQuery.topic] : []
+    const params = []
+
     let psqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id `
 
-    if (userQuery.topic) {
-        if (!validTopics.includes(userQuery.topic)) return Promise.reject({status: 404, msg: "Topic not found"})
-        psqlQuery += `WHERE topic = $1 `
-    }
+    return Promise.all([topicQuery(), sortbyQuery(), orderQuery()])
+            .then( () => db.query(psqlQuery, params))
+            .then( ( { rows }) => { return { articles: rows } } )
     
-    psqlQuery += `GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
-
-    return db.query(psqlQuery, values )
-    .then( ( { rows } ) => {
-        return { articles: rows } 
-    })
 }
+  
 
 exports.insertComment = ({ username, article_id, votes, created_at, body}) => {
-    return db.query(`INSERT INTO comments (author, article_id, votes, created_at, body) VALUES ($1, $2, $3, $4, $5) RETURNING *`, [username, +article_id, votes, created_at, body])
+    return db.query(`INSERT INTO comments (author, article_id, votes, created_at, body) params ($1, $2, $3, $4, $5) RETURNING *`, [username, +article_id, votes, created_at, body])
     .then(( { rows }) => {
         return { comment: rows }
     })
@@ -57,5 +80,4 @@ exports.updateArticleById = (articleId, inc_votes) => {
     .then( ( { rows }) => {
         return { article: rows[0] }
     })
-
 }

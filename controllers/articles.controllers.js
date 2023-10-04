@@ -9,7 +9,7 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    fetchArticles(req.query ).then( (result) => res.status(200).send(result))
+    fetchArticles(req.query).then( (result) => res.status(200).send(result))
     .catch( (err) => next(err) )
   }
 

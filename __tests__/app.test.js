@@ -364,3 +364,41 @@ describe("NEW FEATURE: get comment_count from article_id", () => {
         })
     })
 })
+
+describe.only("NEW FEATURE: GET /api/articles (sorting queries)", () => {
+    test("200: responds with an array sorted articls by author", () => {
+        return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toBeSortedBy("author")
+        })
+    })
+
+    test("200: responds with an array of ascending articles by author", () => {
+        return request(app)
+        .get("/api/articles?sort_by=author&order=asc")
+        .expect(200)
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toBeSortedBy("author")
+        })
+    })
+
+    test("200: responds with an array of descending articles by author", () => {
+        return request(app)
+        .get("/api/articles?sort_by=author&order=desc")
+        .expect(200)
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toBeSortedBy("author", { descending: true })
+        })
+    })
+
+    test("400: invalid sort_by query", () => {
+        return request(app)
+        .get("/api/articles?sort_by=cheese")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid sort_by query")
+        })
+    })
+})
