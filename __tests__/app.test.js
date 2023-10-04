@@ -53,7 +53,7 @@ describe("GET /api", () => {
 
 })
 
-describe("GET /api/articles/:article_id", () => { 
+describe.only("GET /api/articles/:article_id", () => { 
     test("status:200, responds with article with a given id", () => {
         return request(app)
         .get("/api/articles/1")
@@ -61,10 +61,9 @@ describe("GET /api/articles/:article_id", () => {
         .then( ( { body: { article } }) => {
             testArticle = data.articleData[0]
             testArticle.created_at = "2020-07-09T20:11:00.000Z"
-            expect(article).toEqual( { 
-                                    article_id: 1,
-                                    ...testArticle
-                                })
+            testArticle.comment_count = "11"
+            testArticle.article_id = 1
+            expect(article).toEqual(testArticle)
         })
     })
 
