@@ -322,8 +322,20 @@ describe("GET /api/articles (topic query)", () => {
         .get("/api/articles?topic=mitch")
         .expect(200)   
         .then( ( { body: { articles } } ) => {
-            console.log(articles)
+            expect(articles).toHaveLength(12)
+            articles.forEach( (article) => {
+                expect(article.topic).toBe("mitch")
+            })
 
+        })
+    })
+
+    test("200: responds with an an empty array if a valid topic has no associated articles", () => {
+        return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)   
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toEqual([])
         })
     })
 
@@ -335,5 +347,6 @@ describe("GET /api/articles (topic query)", () => {
             expect(msg).toBe("Topic not found")
         })
     })
+
 
 })

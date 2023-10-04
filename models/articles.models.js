@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const data = require('../db/data/test-data')
 
 exports.fetchArticleById = (articleId) => {  
     return db.query('SELECT * FROM articles WHERE article_id = $1;', [articleId]).then( ( { rows }) => {
@@ -8,18 +9,22 @@ exports.fetchArticleById = (articleId) => {
 
 exports.fetchArticles = (userQuery) => {
 
+    validTopics = data.topicData.map( (topic) => topic.slug)
+
     const values = userQuery.topic ? [userQuery.topic] : []
     let psqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id `
 
-    if (userQuery.topic) psqlQuery += `WHERE topic = $1 `
+    if (userQuery.topic) {
+        if (!validTopics.includes(userQuery.topic)) return Promise.reject({status: 404, msg: "Topic not found"})
+        psqlQuery += `WHERE topic = $1 `
+    }
     
     psqlQuery += `GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
 
     return db.query(psqlQuery, values )
     .then( ( { rows } ) => {
-        if (!rows.length) return Promise.reject({status: 404, msg: "Topic not found"})
         return { articles: rows } 
     })
 }
