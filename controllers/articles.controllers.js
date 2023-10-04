@@ -6,9 +6,7 @@ exports.getArticleById = (req, res, next) => {
         return res.status(200).send( result )
     })
     .catch( (err) => {
-        next({ msg: "Invalid article_id",
-                            ...err
-                            })
+        next(err)
     })
 }
 
