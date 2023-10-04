@@ -352,7 +352,7 @@ describe("GET /api/articles (topic query)", () => {
             expect(msg).toBe("Topic not found")
         })
     })
-
+})
 
 describe("NEW FEATURE: get comment_count from article_id", () => {
     test("200: responds with the article comment_count", () => {

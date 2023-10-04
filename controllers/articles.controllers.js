@@ -6,7 +6,7 @@ exports.getArticleById = (req, res, next) => {
         return res.status(200).send( result )
     })
     .catch( (err) => next(err) )
-
+}
 
 exports.getArticles = (req, res, next) => {
     fetchArticles(req.query ).then( (result) => res.status(200).send(result))
