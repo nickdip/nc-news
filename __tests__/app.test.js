@@ -401,4 +401,22 @@ describe.only("NEW FEATURE: GET /api/articles (sorting queries)", () => {
             expect(msg).toBe("Invalid sort_by query")
         })
     })
+
+    test("400: invalid order query", () => {
+        return request(app)
+        .get("/api/articles?order=UP")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid order query")
+        })
+    })
+
+    test("400: invalid sort_by and order query", () => {
+        return request(app)
+        .get("/api/articles?sort_by=cheese&order=UP")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid sort_by query")
+        })
+    })
 })
