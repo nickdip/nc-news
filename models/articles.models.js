@@ -2,7 +2,13 @@ const db = require('../db/connection');
 const data = require('../db/data/test-data')
 
 exports.fetchArticleById = (articleId) => {  
-    return db.query('SELECT * FROM articles WHERE article_id = $1;', [articleId]).then( ( { rows }) => {
+    return db.query(`SELECT articles.*,
+                    COUNT(comments.article_id) AS comment_count 
+                    FROM articles
+                    LEFT JOIN comments
+                    ON comments.article_id = articles.article_id
+                    WHERE articles.article_id = $1
+                    GROUP BY articles.article_id;`, [articleId]).then( ( { rows }) => {
         if (!rows.length) return Promise.reject({status: 404, msg: "Article not found"})
         return { article: rows[0] }
     })}
@@ -27,7 +33,6 @@ exports.fetchArticles = (userQuery) => {
     .then( ( { rows } ) => {
         return { articles: rows } 
     })
-}
 
 exports.insertComment = ({ username, article_id, votes, created_at, body}) => {
     return db.query(`INSERT INTO comments (author, article_id, votes, created_at, body) VALUES ($1, $2, $3, $4, $5) RETURNING *`, [username, +article_id, votes, created_at, body])
