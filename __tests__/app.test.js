@@ -572,3 +572,51 @@ describe("GET /api/users/:username", () => {
 })
 
 
+describe("GET /api/articles/:article_id/commments (pagination)", () => {
+    test("200: responds with an array of comments that defaults to 10", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then( ( { body: { comments } } ) => {
+            expect(comments).toHaveLength(10)
+        })
+    })
+
+    test("200: responds with an array of comments with a limit of 5", () => {
+        return request(app)
+        .get("/api/articles/1/comments?limit=5")
+        .expect(200)
+        .then( ( { body: { comments } } ) => {
+            expect(comments).toHaveLength(5)
+        })
+    })
+
+    test("200: responds with an array of comments with a limit of 5 and an offset of 5", () => {
+        return request(app)
+        .get("/api/articles/1/comments?limit=5&p=2")
+        .expect(200)
+        .then( ( {body: { comments } } ) => {
+            expect(comments).toHaveLength(5)
+            expect(comments[0].comment_id).toBe(8)
+        })
+    })
+
+    test("400: invalid limit query", () => {
+        return request(app)
+        .get("/api/articles/1/comments?limit=cheese")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid limit query")
+        })
+    })
+
+    test("400: invalid p query", () => {
+        return request(app)
+        .get("/api/articles/1/comments?p=cheese")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid p query")
+        })
+    })
+
+})

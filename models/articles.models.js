@@ -1,5 +1,6 @@
 const db = require('../db/connection');
-const Query = require("./utils.js")
+const articleQuery = require("./queries/article.query.js")
+const commentsQuery = require("./queries/comments.query.js")
 
 exports.fetchArticleById = (articleId) => {  
     return db.query(`SELECT articles.*,
@@ -15,11 +16,19 @@ exports.fetchArticleById = (articleId) => {
 
 exports.fetchArticles = (userQuery) => {
 
-    newQuery = new Query(userQuery)
 
-    return Promise.all([newQuery.topic(), newQuery.sortby(), newQuery.order(), newQuery.limit(), newQuery.offset()])
-            .then( () => Promise.all([db.query(newQuery.psqlQuery, newQuery.params),
-                                     db.query(newQuery.psqlQuery + newQuery.psqlQueryPagination, newQuery.params)]))
+    let initialQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id`
+
+    newQuery = new articleQuery(userQuery, initialQuery)
+
+
+    return Promise.all( [ newQuery.topic(), newQuery.sortby(), newQuery.order(), newQuery.limit(), newQuery.offset() ] )
+            .then( () => Promise.all([
+                            db.query(newQuery.printQueriesNoPagination(), newQuery.params),
+                            db.query(newQuery.printQueryAll(), newQuery.params)
+                        ]))
             .then( ( [ allData,   limitedData ]) => { 
                     return { articles: limitedData.rows,
                             total_count: allData.rows.length} 
@@ -34,13 +43,20 @@ exports.insertComment = ({ username, article_id, votes, created_at, body}) => {
 }
 
 
-exports.fetchCommentsByArticleId = (articleId) => {
-    return db.query(`SELECT * FROM comments
-                    WHERE article_id = $1
-                    ORDER BY created_at DESC;`, [articleId]).then( ( { rows }) => {
-        if (!rows.length) return Promise.reject({status: 404, msg: "Article not found"})
-        return { comments: rows }
-    })
+exports.fetchCommentsByArticleId = (userQuery, articleId) => {
+
+    let psqlQuery = `SELECT * FROM comments
+    WHERE article_id = $1
+    ORDER BY created_at DESC`
+
+    let newQuery = new commentsQuery(userQuery, psqlQuery)
+    
+    return Promise.all([ newQuery.limit(), newQuery.offset() ])
+            .then( () => db.query(newQuery.printQueryAll(), [articleId]))
+            .then( ( { rows }) => {
+            if (!rows.length) return Promise.reject({status: 404, msg: "Article not found"})
+            return { comments: rows }
+        })
 }
 
 exports.updateArticleById = (articleId, inc_votes) => {
