@@ -337,6 +337,7 @@ describe("NEW FEATURE: get comment_count from article_id", () => {
     })
 })
 
+
 describe("NEW FEATURE: GET /api/articles (sorting queries)", () => {
     test("200: responds with an array sorted articls by author", () => {
         return request(app)
@@ -450,3 +451,121 @@ describe.only("GET API/articles (pagination)", () => {
     })
 
 })
+
+describe("POST /api/articles", () => {
+    test("201: responds with posted article with given avatar", () => {
+        return request(app)
+        .post("/api/articles")
+        .send({ title: "test title", body: "test body", topic: "mitch", author: "rogersop", article_img_url: "https://www.test.com" })
+        .expect(201)
+        .then( ( { body: { article } } ) => {
+                expect(article.article_id).toBe(14)
+                expect(article.title).toBe("test title")
+                expect(article.topic).toBe("mitch")
+                expect(article.author).toBe("rogersop")
+                expect(article.body).toBe("test body")
+                expect(article.article_img_url).toBe("https://www.test.com")
+                expect(article.comment_count).toBe(0)
+                expect(article.votes).toBe(0)
+
+        })
+    })
+
+    test("201: responds with posted article with no given avatar", () => {
+        return request(app)
+        .post("/api/articles")
+        .send({ title: "test title", body: "test body", topic: "mitch", author: "rogersop" })
+        .expect(201)
+        .then( ( { body: { article } } ) => {
+            console.log(article)
+            expect(article.article_id).toBe(14)
+            expect(article.title).toBe("test title")
+            expect(article.topic).toBe("mitch")
+            expect(article.author).toBe("rogersop")
+            expect(article.body).toBe("test body")
+            expect(article.article_img_url).toBe("https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png")
+            expect(article.comment_count).toBe(0)
+            expect(article.votes).toBe(0)
+        })
+    })
+
+
+    test("400: invalid object (must have title, body, topic and author keys)", () => {
+        return request(app)
+        .post("/api/articles")
+        .send({ title: "test title", body: "test body", topic: "mitch" })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid object (must have title, body, topic and author keys)")
+        })
+
+    })
+
+
+
+})
+
+describe("PATCH /api/comments/:comment_id", () => {
+    test("200: responds with updated vote", () => {
+        return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then( ( { body: { updatedComment } } ) => {
+            expect(updatedComment.votes).toBe(17)
+        })
+    })
+
+    test("400: inc_votes key not found", () => {
+        return request(app)
+        .patch("/api/comments/2")
+        .send({ votes: 1 })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid vote")
+        })
+    })
+
+    test("400: inc_votes is not a valid number", () => {
+        return request(app)
+        .patch("/api/comments/2")
+        .send({ inc_votes: "a" })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe( "Invalid vote")
+        })
+    })
+
+    test("404: comment not found", () => {
+        return request(app)
+        .patch("/api/comments/999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Comment not found")
+        })
+    })
+
+})
+
+describe("GET /api/users/:username", () => {
+    test("200: responds with user object", () => {
+        return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then( ( { body: { user } } ) => {
+            expect(user[0]).toEqual(data.userData[0])
+        })
+    })
+
+    test("404: user not found", () => {
+        return request(app)
+        .get("/api/users/nickdip")
+        .expect(404)
+        .then( ( { body: { msg } }  ) => {
+            expect(msg).toBe("User not found")
+        })
+    })
+})
+
+

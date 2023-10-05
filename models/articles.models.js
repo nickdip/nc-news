@@ -47,4 +47,26 @@ exports.updateArticleById = (articleId, inc_votes) => {
     .then( ( { rows }) => {
         return { article: rows[0] }
     })
+
 }
+
+exports.insertArticle = ({ title, body, topic, author, article_img_url }) => {
+
+    if (!(title && body && topic && author)) return Promise.reject({status: 400, msg: "Invalid object (must have title, body, topic and author keys)"})
+
+    //some default picture here
+    if (!article_img_url) article_img_url = "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+
+    created_at = new Date()
+
+    console.log(created_at)
+    
+    return db.query(`INSERT INTO articles (title, body, topic, author, article_img_url, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [title, body, topic, author, article_img_url, created_at])
+    .then(( { rows }) => {
+        return { article: { comment_count: 0,
+                            ...rows[0]
+                        }
+                    }})
+
+}
+
