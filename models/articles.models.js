@@ -18,10 +18,12 @@ exports.fetchArticles = (userQuery) => {
     newQuery = new Query(userQuery)
 
     return Promise.all([newQuery.topic(), newQuery.sortby(), newQuery.order(), newQuery.limit(), newQuery.offset()])
-            .then( () => db.query(newQuery.psqlQuery, newQuery.params))
-            .then( ( { rows }) => { return { articles: rows } } )
-
-    
+            .then( () => Promise.all([db.query(newQuery.psqlQuery, newQuery.params),
+                                     db.query(newQuery.psqlQuery + newQuery.psqlQueryPagination, newQuery.params)]))
+            .then( ( [ allData,   limitedData ]) => { 
+                    return { articles: limitedData.rows,
+                            total_count: allData.rows.length} 
+                } )
 }
   
 
@@ -57,8 +59,6 @@ exports.insertArticle = ({ title, body, topic, author, article_img_url }) => {
     if (!article_img_url) article_img_url = "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
 
     created_at = new Date()
-
-    console.log(created_at)
     
     return db.query(`INSERT INTO articles (title, body, topic, author, article_img_url, created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, [title, body, topic, author, article_img_url, created_at])
     .then(( { rows }) => {
