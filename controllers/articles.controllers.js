@@ -44,7 +44,6 @@ exports.postComment = (req, res, next) => {
 
 exports.postArticle = (req, res, next) => {
     insertArticle(req.body).then( (result) => {
-        console.log(result)
         res.status(201).send(result)
     })
     .catch( (err) => {

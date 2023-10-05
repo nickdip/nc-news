@@ -399,8 +399,9 @@ describe("GET API/articles (pagination)", () => {
         return request(app)
         .get("/api/articles")
         .expect(200)
-        .then( ( { body: { articles } } ) => {
+        .then( ( { body: { articles, total_count }} ) => {
             expect(articles).toHaveLength(10)
+            expect(total_count).toBe(13)
         })
     })
 
@@ -408,8 +409,9 @@ describe("GET API/articles (pagination)", () => {
         return request(app)
         .get("/api/articles/?limit=5")
         .expect(200)
-        .then( ( { body: { articles } } ) => {
+        .then( ( { body: { articles, total_count } } ) => {
             expect(articles).toHaveLength(5)
+            expect(total_count).toBe(13)
         })
     })
 
@@ -417,9 +419,10 @@ describe("GET API/articles (pagination)", () => {
         return request(app)
         .get("/api/articles/?limit=5&p=2")
         .expect(200)
-        .then( ( { body: { articles } } ) => {
+        .then( ( { body: { articles, total_count } } ) => {
             expect(articles).toHaveLength(5)
             expect(articles[0].article_id).toBe(5)
+            expect(total_count).toBe(13)
         })
     })
 
@@ -427,8 +430,9 @@ describe("GET API/articles (pagination)", () => {
         return request(app)
         .get("/api/articles/?limit=5&p=50")
         .expect(200)
-        .then( ( { body : { articles } } ) => {
+        .then( ( { body : { articles, total_count } } ) => {
             expect(articles).toEqual([])
+            expect(total_count).toBe(13)
         })
     })
 
@@ -477,7 +481,6 @@ describe("POST /api/articles", () => {
         .send({ title: "test title", body: "test body", topic: "mitch", author: "rogersop" })
         .expect(201)
         .then( ( { body: { article } } ) => {
-            console.log(article)
             expect(article.article_id).toBe(14)
             expect(article.title).toBe("test title")
             expect(article.topic).toBe("mitch")

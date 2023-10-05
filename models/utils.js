@@ -9,6 +9,7 @@ class Query {
         this.psqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
         FROM articles
         LEFT JOIN comments ON articles.article_id = comments.article_id `
+        this.psqlQueryPagination = ``
         this.params = []
     }
 
@@ -51,7 +52,7 @@ class Query {
             if (isNaN(this.userQuery.limit)) return Promise.reject({status: 400, msg: "Invalid limit query"})
         }
         else this.userQuery.limit = 10
-        this.psqlQuery += ` LIMIT ${this.userQuery.limit}`
+        this.psqlQueryPagination += ` LIMIT ${this.userQuery.limit}`
         return Promise.resolve() 
 
     }
@@ -59,7 +60,7 @@ class Query {
     offset() {
         if (this.userQuery.p) {
             if (isNaN(this.userQuery.p)) return Promise.reject({status: 400, msg: "Invalid p query"})
-            this.psqlQuery += ` OFFSET ${(((this.userQuery.p - 1) * this.userQuery.limit))}`
+            this.psqlQueryPagination += ` OFFSET ${(((this.userQuery.p - 1) * this.userQuery.limit))}`
         }
         return Promise.resolve()
     }
