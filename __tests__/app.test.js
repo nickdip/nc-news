@@ -364,3 +364,23 @@ describe("NEW FEATURE: get comment_count from article_id", () => {
         })
     })
 })
+
+describe("GET /api/users/:username", () => {
+    test("200: responds with user object", () => {
+        return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then( ( { body: { user } } ) => {
+            expect(user[0]).toEqual(data.userData[0])
+        })
+    })
+
+    test("404: user not found", () => {
+        return request(app)
+        .get("/api/users/nickdip")
+        .expect(404)
+        .then( ( { body: { msg } }  ) => {
+            expect(msg).toBe("User not found")
+        })
+    })
+})
