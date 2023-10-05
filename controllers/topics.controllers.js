@@ -4,7 +4,7 @@ const { fetchTopics, insertTopic } = require("../models/topics.models")
 exports.getTopics = (req, res) => {
     fetchTopics()
     .then( (result) => {
-        res.status(result.status).send( result.topics )
+        res.status(200).send( result )
     })
 }
 

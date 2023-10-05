@@ -85,3 +85,15 @@ exports.insertArticle = ({ title, body, topic, author, article_img_url }) => {
 
 }
 
+exports.deleteArticleById = (articleId) => {
+
+    if (articleId === NaN) return Promise.reject({status: 400, msg: "Invalid article_id"})
+
+    return db.query('DELETE FROM comments WHERE article_id = $1;', [articleId])
+    .then( ({ rows} ) => {
+        return db.query('DELETE FROM articles WHERE article_id = $1 RETURNING *;', [articleId])
+    })
+    .then( ({ rows }) => {
+        if (!rows.length) return Promise.reject({status: 404, msg: "Article not found"})
+    })
+}

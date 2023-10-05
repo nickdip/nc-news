@@ -24,14 +24,14 @@ describe("Invalid", () => {
 
 })
 
-describe("GET /api/topics", () => {
+describe.only("GET /api/topics", () => {
     test("status:200, responds with an array of topic objects", () => {
         return request(app)
         .get("/api/topics")
         .expect(200)
-        .then(({ body }) => {
-            expect(body).toHaveLength(3)
-            body.forEach( (topic, index) => {
+        .then(({ body: { topics } }) => {
+            expect(topics).toHaveLength(3)
+            topics.forEach( (topic, index) => {
                 expect(topic.description).toEqual(data.topicData[index].description)
                 expect(topic.slug).toEqual(data.topicData[index].slug)
             })
@@ -621,7 +621,7 @@ describe("GET /api/articles/:article_id/commments (pagination)", () => {
 
 })
 
-describe.only("POST api/topics/", () => {
+describe("POST api/topics/", () => {
     test("201: responds with posted topic", () => {
         return request(app)
         .post("/api/topics/")
@@ -642,4 +642,51 @@ describe.only("POST api/topics/", () => {
             expect(msg).toBe("Invalid object (must have slug and description keys)")
         })
     })
+    })
+
+describe("DELETE /api/articles/:article_id", () => {
+    
+    test("204: deletes article with given article_id", () => {
+        return request(app)
+        .delete("/api/articles/1")
+        .expect(204)
+        .then( () => {
+            return request(app)
+            .get("/api/articles/1/comments")
+            .expect(404)
+        })
+    })
+
+    test("204: deletes article with given article_id and no comments attached", () => {
+        return request(app)
+        .delete("/api/articles/2")
+        .expect(204)
+        .then( () => {
+            return request(app)
+            .get("/api/articles/2/comments")
+            .expect(404)
+        })
+    })
+
+    test("404: article not found", () => {
+        return request(app)
+        .delete("/api/articles/999")
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Article not found")
+        })
+    })
+    
+    test("400: invalid article_id", () => {
+        return request(app)
+        .delete("/api/articles/what")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("PSQL Error inserting data")
+        })
+
 })
+
+})
+
+
