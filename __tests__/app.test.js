@@ -24,7 +24,7 @@ describe("Invalid", () => {
 
 })
 
-describe.only("GET /api/topics", () => {
+describe("GET /api/topics", () => {
     test("status:200, responds with an array of topic objects", () => {
         return request(app)
         .get("/api/topics")
