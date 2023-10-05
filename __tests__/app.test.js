@@ -364,3 +364,48 @@ describe("NEW FEATURE: get comment_count from article_id", () => {
         })
     })
 })
+
+
+
+describe.only("PATCH /api/comments/:comment_id", () => {
+    test("200: responds with updated vote", () => {
+        return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then( ( { body: { updatedComment } } ) => {
+            expect(updatedComment.votes).toBe(17)
+        })
+    })
+
+    test("400: inc_votes key not found", () => {
+        return request(app)
+        .patch("/api/comments/2")
+        .send({ votes: 1 })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid vote")
+        })
+    })
+
+    test("400: inc_votes is not a valid number", () => {
+        return request(app)
+        .patch("/api/comments/2")
+        .send({ inc_votes: "a" })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe( "Invalid vote")
+        })
+    })
+
+    test("404: comment not found", () => {
+        return request(app)
+        .patch("/api/comments/999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Comment not found")
+        })
+    })
+
+})
