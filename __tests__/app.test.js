@@ -620,3 +620,26 @@ describe("GET /api/articles/:article_id/commments (pagination)", () => {
     })
 
 })
+
+describe.only("POST api/topics/", () => {
+    test("201: responds with posted topic", () => {
+        return request(app)
+        .post("/api/topics/")
+        .send({ slug: "test", description: "test" })
+        .expect(201)
+        .then( ( { body: { topic } } ) => {
+            expect(topic.slug).toBe("test")
+            expect(topic.description).toBe("test")
+        })
+    }) 
+
+    test("400: invalid object (must have slug and description keys)", () => {
+        return request(app)
+        .post("/api/topics/")
+        .send({ slug: "test" })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid object (must have slug and description keys)")
+        })
+    })
+})
