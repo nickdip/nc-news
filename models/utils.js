@@ -59,7 +59,6 @@ class Query {
     offset() {
         if (this.userQuery.p) {
             if (isNaN(this.userQuery.p)) return Promise.reject({status: 400, msg: "Invalid p query"})
-            console.log(((this.userQuery.p - 1) * this.userQuery.limit) + 1)
             this.psqlQuery += ` OFFSET ${(((this.userQuery.p - 1) * this.userQuery.limit))}`
         }
         return Promise.resolve()
