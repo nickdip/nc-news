@@ -11,6 +11,7 @@ exports.deleteCommentById = (req, res, next) => {
 
 }
 
+
 exports.patchVotesByCommentId = (req, res, next) => {
     updateVotesByCommentId(req.params.comment_id, req.body.inc_votes).then( (comment) => {
         res.status(200).send({ updatedComment: comment })

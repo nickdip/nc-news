@@ -20,3 +20,4 @@ exports.updateVotesByCommentId = (commentId, votes) => {
     })
 
 }
+
