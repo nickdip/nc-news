@@ -165,7 +165,7 @@ describe("GET /api/articles/:articleid/comments", () => {
         })})
 })
 
-describe.skip("POST /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
     test("status:201, responds with posted comment", () => {
         return request(app)
         .post("/api/articles/1/comments")
@@ -394,7 +394,7 @@ describe("NEW FEATURE: GET /api/articles (sorting queries)", () => {
     })
 })
 
-describe.only("GET API/articles (pagination)", () => {
+describe("GET API/articles (pagination)", () => {
     test("200: responds with an array of articles that defaults to 10", () => {
         return request(app)
         .get("/api/articles")
