@@ -42,3 +42,6 @@ exports.postComment = (req, res, next) => {
     })
 }
 
+exports.postArticles = (req, res, next) => {
+
+}
