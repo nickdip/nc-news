@@ -365,7 +365,7 @@ describe("NEW FEATURE: get comment_count from article_id", () => {
     })
 })
 
-describe.only("POST /api/articles", () => {
+describe("POST /api/articles", () => {
     test("201: responds with posted article with given avatar", () => {
         return request(app)
         .post("/api/articles")
@@ -417,3 +417,67 @@ describe.only("POST /api/articles", () => {
 
 
 })
+
+describe("PATCH /api/comments/:comment_id", () => {
+    test("200: responds with updated vote", () => {
+        return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 1 })
+        .expect(200)
+        .then( ( { body: { updatedComment } } ) => {
+            expect(updatedComment.votes).toBe(17)
+        })
+    })
+
+    test("400: inc_votes key not found", () => {
+        return request(app)
+        .patch("/api/comments/2")
+        .send({ votes: 1 })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Invalid vote")
+        })
+    })
+
+    test("400: inc_votes is not a valid number", () => {
+        return request(app)
+        .patch("/api/comments/2")
+        .send({ inc_votes: "a" })
+        .expect(400)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe( "Invalid vote")
+        })
+    })
+
+    test("404: comment not found", () => {
+        return request(app)
+        .patch("/api/comments/999")
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then( ( { body: { msg } } ) => {
+            expect(msg).toBe("Comment not found")
+        })
+    })
+
+})
+
+describe("GET /api/users/:username", () => {
+    test("200: responds with user object", () => {
+        return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then( ( { body: { user } } ) => {
+            expect(user[0]).toEqual(data.userData[0])
+        })
+    })
+
+    test("404: user not found", () => {
+        return request(app)
+        .get("/api/users/nickdip")
+        .expect(404)
+        .then( ( { body: { msg } }  ) => {
+            expect(msg).toBe("User not found")
+        })
+    })
+})
+
