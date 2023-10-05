@@ -1,30 +1,24 @@
 const express = require("express")
 const app = express()
 
-
-const { api, articles, errors, topics, comments, users } = require("./controllers")
+const api  = require("./routes/index.routes")
+const articles = require("./routes/articles.routes")
+const comments = require("./routes/comments.routes")
+const users = require("./routes/users.routes")
+const topics = require("./routes/topics.routes")
+const errors = require("./controllers/errors.controllers")
 
 app.use(express.json())
 
+app.use("/api", api)
 
-app.get("/api/topics", topics.getTopics)
+app.use("/api/articles", articles)
 
-app.get("/api", api.getDiscriptions)
+app.use("/api/comments", comments)
 
-app.get("/api/articles/:article_id", articles.getArticleById)
+app.use("/api/users", users)
 
-app.get("/api/articles/:article_id/comments", articles.getCommentsByArticleId)
-
-app.get("/api/articles", articles.getArticles)
-
-app.get("/api/users", users.getUsers)
-
-app.delete("/api/comments/:comment_id", comments.deleteCommentById)
-
-app.patch("/api/articles/:article_id", articles.patchArticleById)
-
-app.post("/api/articles/:article_id/comments", articles.postComment)
-
+app.use("/api/topics", topics)
 
 app.use(errors.handleCustomErrors)
 app.use(errors.handlePSQLErrors)
