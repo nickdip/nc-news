@@ -1,5 +1,5 @@
 const db = require('../db/connection');
-const data = require('../db/data/test-data')
+const Query = require("./utils.js")
 
 exports.fetchArticleById = (articleId) => {  
     return db.query(`SELECT articles.*,
@@ -13,47 +13,14 @@ exports.fetchArticleById = (articleId) => {
         return { article: rows[0] }
     })}
 
-exports.fetchArticles = async (userQuery) => {
+exports.fetchArticles = (userQuery) => {
 
-    function topicQuery() {
-        if (userQuery.topic) {
-            if (!validTopics.includes(userQuery.topic)) return Promise.reject({status: 404, msg: "Topic not found"})
-            psqlQuery += ` WHERE topic = $1 `
-            params.push(userQuery.topic)
-        }
-        psqlQuery += `GROUP BY articles.article_id`
-        return Promise.resolve()
-    } 
+    newQuery = new Query(userQuery)
 
-
-    function sortbyQuery() {
-        if (userQuery.sort_by) {
-            if (!validSortBy.includes(userQuery.sort_by)) return Promise.reject({status: 400, msg: "Invalid sort_by query"})
-            psqlQuery += ` ORDER BY ${userQuery.sort_by} `
-        }
-        return Promise.resolve()
-    }
-    function orderQuery() {
-        if (userQuery.order) {
-            if (userQuery.order !== 'asc' && userQuery.order !== 'desc') return Promise.reject({status: 400, msg: "Invalid order query"})
-            psqlQuery += ` ${userQuery.order} `
-        }
-        return Promise.resolve()
-    }
-
-
-    validTopics = data.topicData.map( (topic) => topic.slug)
-    validSortBy = Object.keys(data.articleData[0])
-
-    const params = []
-
-    let psqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count
-    FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id `
-
-    return Promise.all([topicQuery(), sortbyQuery(), orderQuery()])
-            .then( () => db.query(psqlQuery, params))
+    return Promise.all([newQuery.topic(), newQuery.sortby(), newQuery.order(), newQuery.limit(), newQuery.offset()])
+            .then( () => db.query(newQuery.psqlQuery, newQuery.params))
             .then( ( { rows }) => { return { articles: rows } } )
+
     
 }
   

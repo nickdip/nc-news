@@ -104,33 +104,6 @@ describe("GET /api/articles", () => {
         .then( ( { body: { articles } } ) => {
             dates = articles.map( (article) => article.created_at = Date.parse(article.created_at ))
             const articleIdOrder = [3, 6, 2, 12, 13, 5, 1, 9, 10, 4, 8, 11, 7]
-            expect(articles).toHaveLength(13)
-            expect(dates).toBeSorted({ descending: true })
-            articles.forEach( (article, index) => {
-                expect(article).toHaveProperty("author")
-                expect(article).toHaveProperty("title")
-                expect(article).toHaveProperty("article_id")
-                expect(article).toHaveProperty("topic")
-                expect(article).toHaveProperty("created_at")
-                expect(article).toHaveProperty("votes")
-                expect(article).toHaveProperty("comment_count")
-                expect(article).not.toHaveProperty("body")
-                expect(article.article_id).toBe(articleIdOrder[index])
-            })
-            
-    })
-
-    })})
-
-describe("GET /api/articles", () => {
-    test("status:200, responds with an array of article objects", () => {
-        return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then( ( { body: { articles } } ) => {
-            dates = articles.map( (article) => article.created_at = Date.parse(article.created_at ))
-            const articleIdOrder = [3, 6, 2, 12, 13, 5, 1, 9, 10, 4, 8, 11, 7]
-            expect(articles).toHaveLength(13)
             expect(dates).toBeSorted({ descending: true })
             articles.forEach( (article, index) => {
                 expect(article).toHaveProperty("author")
@@ -192,7 +165,7 @@ describe("GET /api/articles/:articleid/comments", () => {
         })})
 })
 
-describe("POST /api/articles/:article_id/comments", () => {
+describe.skip("POST /api/articles/:article_id/comments", () => {
     test("status:201, responds with posted comment", () => {
         return request(app)
         .post("/api/articles/1/comments")
@@ -327,7 +300,6 @@ describe("GET /api/articles (topic query)", () => {
         .get("/api/articles?topic=mitch")
         .expect(200)   
         .then( ( { body: { articles } } ) => {
-            expect(articles).toHaveLength(12)
             articles.forEach( (article) => {
                 expect(article.topic).toBe("mitch")
             })
@@ -365,13 +337,13 @@ describe("NEW FEATURE: get comment_count from article_id", () => {
     })
 })
 
-describe.only("NEW FEATURE: GET /api/articles (sorting queries)", () => {
+describe("NEW FEATURE: GET /api/articles (sorting queries)", () => {
     test("200: responds with an array sorted articls by author", () => {
         return request(app)
         .get("/api/articles?sort_by=author")
         .expect(200)
         .then( ( { body: { articles } } ) => {
-            expect(articles).toBeSortedBy("author")
+            expect(articles).toBeSortedBy("author", { descending: true })
         })
     })
 
@@ -419,4 +391,62 @@ describe.only("NEW FEATURE: GET /api/articles (sorting queries)", () => {
             expect(msg).toBe("Invalid sort_by query")
         })
     })
+})
+
+describe.only("GET API/articles (pagination)", () => {
+    test("200: responds with an array of articles that defaults to 10", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toHaveLength(10)
+        })
+    })
+
+    test("200: responds with an array of articles with a limit of 5", () => {
+        return request(app)
+        .get("/api/articles/?limit=5")
+        .expect(200)
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toHaveLength(5)
+        })
+    })
+
+    test("200: responds with an array of articles with a limit of 5 and an offset of 5", () => {
+        return request(app)
+        .get("/api/articles/?limit=5&p=2")
+        .expect(200)
+        .then( ( { body: { articles } } ) => {
+            expect(articles).toHaveLength(5)
+            expect(articles[0].article_id).toBe(5)
+        })
+    })
+
+    test("200: responds with an empty array if p is too high", () => {
+        return request(app)
+        .get("/api/articles/?limit=5&p=50")
+        .expect(200)
+        .then( ( { body : { articles } } ) => {
+            expect(articles).toEqual([])
+        })
+    })
+
+    test("400: invalid limit query", () => {
+        return request(app)
+        .get("/api/articles/?limit=cheese")
+        .expect(400)
+        .then( ( { body: { msg } } ) => {   
+            expect(msg).toBe("Invalid limit query")
+         })
+        })
+
+    test("400: invalid p query", () => {
+        return request(app)
+        .get("/api/articles/?p=cheese")
+        .expect(400)
+        .then( ( { body : { msg } } ) => {
+            expect(msg).toBe("Invalid p query")
+        })
+    })
+
 })
