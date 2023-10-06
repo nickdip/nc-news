@@ -24,10 +24,10 @@ exports.fetchArticles = (userQuery) => {
     newQuery = new articleQuery(userQuery, initialQuery)
 
 
-    return Promise.all( [ newQuery.topic(), newQuery.sortby(), newQuery.order(), newQuery.limit(), newQuery.offset() ] )
+    return Promise.all( [ newQuery.topic(), newQuery.sortby(), newQuery.limit(), newQuery.offset() ] )
             .then( () => Promise.all([
-                            db.query(newQuery.printQueriesNoPagination(), newQuery.params),
-                            db.query(newQuery.printQueryAll(), newQuery.params)
+                            db.query(newQuery.printQueriesNoPagination()),
+                            db.query(newQuery.printQueryAll())
                         ]))
             .then( ( [ allData,   limitedData ]) => { 
                     return { articles: limitedData.rows,

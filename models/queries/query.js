@@ -5,7 +5,6 @@ class Query {
     constructor(userQuery, psqlQuery) {
         this.userQuery = userQuery
         this.psqlQuery = { initial: psqlQuery }
-        this.params = []
     }
 
 
@@ -32,26 +31,12 @@ class Query {
         return Promise.resolve()
     }
 
-    order() {
-
-        if (this.userQuery.order) {
-            if (this.userQuery.order !== 'asc' && this.userQuery.order !== 'desc') return Promise.reject({status: 400, msg: "Invalid order query"})
-            this.psqlQuery.order = ` ${this.userQuery.order} `
-        }
-        else {
-            this.psqlQuery.order = ` DESC `
-        }
-
-        return Promise.resolve()
-    }
-
     printQueries(executionOrder) {
        let output = ""
        while (executionOrder.length) {
         let current = executionOrder.shift() 
         if (current in this.psqlQuery) output += this.psqlQuery[current]
        }
-
        return output
     }
 
