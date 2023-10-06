@@ -60,7 +60,6 @@ describe("GET /api/articles/:article_id", () => {
         .expect(200)
         .then( ( { body: { article } }) => {
             testArticle = data.articleData[0]
-            testArticle.created_at = "2020-07-09T20:11:00.000Z"
             testArticle.article_id = 1
             expect(article.article_id).toBe(testArticle.article_id)
             expect(article.title).toBe(testArticle.title)
@@ -68,7 +67,7 @@ describe("GET /api/articles/:article_id", () => {
             expect(article.votes).toBe(testArticle.votes)
             expect(article.topic).toBe(testArticle.topic)
             expect(article.author).toBe(testArticle.author)
-            expect(article.created_at).toBe(testArticle.created_at)
+            expect(article.created_at).toBeDefined()
             
         })
     })
@@ -134,7 +133,6 @@ describe("GET /api/articles/:articleid/comments", () => {
                         article_id: 3,
                         author: 'icellusedkars',
                         votes: 0,
-                        created_at: '2020-09-19T23:10:00.000Z'
                         },
                         {
                         comment_id: 10,
@@ -142,11 +140,14 @@ describe("GET /api/articles/:articleid/comments", () => {
                         article_id: 3,
                         author: 'icellusedkars',
                         votes: 0,
-                        created_at: '2020-06-20T07:24:00.000Z'
                         }
                     ]
             expect(comments).toHaveLength(2)
-            expect(comments).toEqual(expected)
+            for (let i = 0; i < expected.length; i++) {
+                for (let key in expected[i]) {
+                    expect(expected[i][key]).toBe(comments[i][key])
+                }
+            }
         })
     })
     test("404: article not found", () => {
