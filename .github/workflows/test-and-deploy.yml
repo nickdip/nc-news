@@ -37,9 +37,6 @@ jobs:
         uses: harmon758/postgresql-action@v1
         with:
           postgresql db: 'nc_news_test'
-
-      - name: set env variables - db names nc_news_test 
-        run: echo "DATABASE_URL==PGDATABASE=nc_news_test node listen.js" >> $GITHUB_ENV
         
       - name: Run tests
         run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm t
