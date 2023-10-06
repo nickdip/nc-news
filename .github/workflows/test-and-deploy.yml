@@ -23,6 +23,13 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+
       - name: Install dependencies
         run: npm ci
 
@@ -30,6 +37,9 @@ jobs:
         uses: harmon758/postgresql-action@v1
         with:
           postgresql db: 'nc_news_test'
+
+      - name: set env variables - db names nc_news_test 
+        run: echo "PGDATABASE=postgresql://postgres@localhost:5432/nc_news_test" >> $GITHUB_ENV
         
       - name: Run tests
         run: PGDATABASE=nc_news_test npm t
