@@ -39,7 +39,7 @@ jobs:
           postgresql db: 'nc_news_test'
 
       - name: set env variables - db names nc_news_test 
-        run: echo "PGDATABASE=postgres://soyzxwuy:8dsfZ3XqGr5CsX1Vs5cjWsYzUimh6glU@trumpet.db.elephantsql.com/soyzxwuy" >> $GITHUB_ENV
+        run: echo "DATABASE_URL=postgres://soyzxwuy:8dsfZ3XqGr5CsX1Vs5cjWsYzUimh6glU@trumpet.db.elephantsql.com/soyzxwuy" >> $GITHUB_ENV
         
       - name: Run tests
         run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm t
