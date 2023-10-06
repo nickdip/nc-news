@@ -29,9 +29,7 @@ jobs:
       - name: Setup Postgres
         uses: harmon758/postgresql-action@v1
         with:
-          postgres db: nc_news_test
-          postgres user: postgres
-          postgres password: postgres
+          postgresql db: 'nc_news_test'
 
       - name: set env variabls - db names nc_news_test 
         run: echo "DB_URL=postgresql://postgres@localhost:5432/nc_news_test" >> $GITHUB_ENV
