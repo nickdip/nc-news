@@ -35,7 +35,7 @@ jobs:
         run: echo "DB_URL=postgresql://postgres@localhost:5432/nc_news_test" >> $GITHUB_ENV
         
       - name: Run tests
-        run: PGDATABASE=nc_news_test PGUSER=testy PGPASSWORD=mctestface npm t
+        run: PGDATABASE=nc_news_test npm t
 
   deploy:
     name: Deploy to Render
