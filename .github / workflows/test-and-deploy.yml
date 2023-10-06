@@ -12,4 +12,27 @@ jobs:
     steps:
       - name: Say hello
         run: echo "Hello, world!"
+  
+  test:
+    name: Run application tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Postgres
+        uses: harmon758/postgres-action@v1.0.0
+        with:
+          postgres-version: '12.x'
+          postgres-user: postgres
+          postgres-password: postgres
+          postgres-db: nc_news_test
+
+      - name: set env variabls - db names nc_news_test 
+        run: echo "DB_URL=postgresql://postgres@localhost:5432/nc_news_test" >> $GITHUB_EN
         
+      - name: Run tests
+        run: PGDATABASE=nc_news_test PGUSER=testy PGPASSWORD=mctestface npm t
