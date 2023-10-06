@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {
@@ -36,7 +36,8 @@
     "body": "I find this existence challenging",
     "created_at": "2020-07-09T20:11:00.000Z",
     "votes": 100,
-    "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    "comment_count": "13"
   }}
   },
 
@@ -91,5 +92,82 @@
       "votes": 101,
      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     }}
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "allows for comments to be posted to an article",
+    "queries": [],
+    "exampleResponse": {"comment": {
+      "comment_id": 19,
+      "author": "butter_bridge",
+      "article_id": 1,
+      "votes": 0,
+      "created_at": "2020-07-09T20:11:00.000",
+      "body": "This is a new comment"
+    }}
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "gets all comments for a given article",
+    "queries": ["sort_by", "order"],
+    "exampleResponse": [
+      {
+      "comment_id": 11,
+      "body": "Ambidextrous marsupial",
+      "article_id": 3,
+      "author": "icellusedkars",
+      "votes": 0,
+      "created_at": "2020-09-19T23:10:00.000Z"
+      },
+      {
+      "comment_id": 10,
+      "body": "git push origin master",
+      "article_id": 3,
+      "author": "icellusedkars",
+      "votes": 0,
+      "created_at": "2020-06-20T07:24:00.000Z"
+      }
+  ]
+  },
+  "POST /api/articles": {
+    "description": "allows for articles to be posted",
+    "queries": [],
+    "exampleResponse":       {
+      "comment_count": 0,
+      "article_id": 14,
+      "title": "test title",
+      "topic": "mitch",
+      "author": "rogersop",
+      "body": "test body",
+      "created_at": "2023-10-06T07:54:54.859Z",
+      "votes": 0,
+      "article_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+    } 
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes an article via article ID",
+    "queries": [],
+    "exampleResponse": {}
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "allows for comments to be updated via comment ID",
+    "queries": [],
+    "exampleResponse":{
+      "comment_id": 1,
+      "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      "article_id": 9,
+      "author": "butter_bridge",
+      "votes": 17,
+      "created_at": "2020-04-06T12:17:00.000Z"
+    }
+  },
+  "GET: /api/users/:username": {
+    "description": "gets a user by username",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "butter_bridge",
+        "name": "jonny",
+        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }
     }
   }
+}
