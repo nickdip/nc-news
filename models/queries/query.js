@@ -45,7 +45,6 @@ class Query {
     }
     
     printQueriesNoPagination() {
-
         return this.printQueries(["initial", "where", "group_by", "sort_by", "order" ])
     }
 

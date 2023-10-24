@@ -9,14 +9,11 @@ class articleQuery extends Query {
 
     topic() {
 
-        const validTopics = data.topicData.map( (topic) => topic.slug)
-
-
         if (this.userQuery.topic) {
-            if (!validTopics.includes(this.userQuery.topic)) return Promise.reject({status: 404, msg: "Topic not found"})
             this.psqlQuery.where = ` WHERE topic = '${this.userQuery.topic}'`
         }
         this.psqlQuery.group_by = ` GROUP BY articles.article_id`
+
 
         return Promise.resolve()
     }

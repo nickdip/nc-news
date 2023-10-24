@@ -307,6 +307,7 @@ describe("GET /api/articles (topic query)", () => {
 
         })
     })
+    })
 
     test("200: responds with an an empty array if a valid topic has no associated articles", () => {
         return request(app)
@@ -316,16 +317,6 @@ describe("GET /api/articles (topic query)", () => {
             expect(articles).toEqual([])
         })
     })
-
-    test("404: responds with an empty array if topic has no articles", () => {
-        return request(app)
-        .get("/api/articles?topic=viscount")
-        .expect(404)
-        .then( ( { body: { msg } } ) => {
-            expect(msg).toBe("Topic not found")
-        })
-    })
-})
 
 describe("NEW FEATURE: get comment_count from article_id", () => {
     test("200: responds with the article comment_count", () => {
@@ -439,7 +430,7 @@ describe("GET API/articles (pagination)", () => {
 
     test("400: invalid limit query", () => {
         return request(app)
-        .get("/api/articles/?limit=cheese")
+        .get("/api/articles?limit=cheese")
         .expect(400)
         .then( ( { body: { msg } } ) => {   
             expect(msg).toBe("Invalid limit query")
@@ -448,7 +439,7 @@ describe("GET API/articles (pagination)", () => {
 
     test("400: invalid p query", () => {
         return request(app)
-        .get("/api/articles/?p=cheese")
+        .get("/api/articles?p=cheese")
         .expect(400)
         .then( ( { body : { msg } } ) => {
             expect(msg).toBe("Invalid p query")

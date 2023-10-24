@@ -128,15 +128,6 @@ describe("articleQuery", () => {
             expect(testQuery.topic()).toBeInstanceOf(Promise)
         })
 
-        test("topic() returns a rejected promise if topic is not a valid topic", () => {
-            const testQuery = new articleQuery({topic: 'test1'}, 'SELECT * FROM articles')
-            return expect(testQuery.topic() ).rejects.toEqual({status: 404, msg: "Topic not found"})
-        })
-
-        test("topic() returns a resolved promise if topic is a valid topic", () => {
-            const testQuery = new articleQuery({topic: 'mitch'}, 'SELECT * FROM articles')
-            return expect(testQuery.topic()).resolves.toBeUndefined()
-        })
 
         test("topic() sets the correct where in the psqlQuery object when given a valid topic", () => {
             const testQuery = new articleQuery({topic: 'mitch'}, 'SELECT * FROM articles')
