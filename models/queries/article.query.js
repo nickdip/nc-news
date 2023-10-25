@@ -1,5 +1,4 @@
 const Query = require("./query.js")
-const data = require('../../db/data/test-data')
 
 class articleQuery extends Query {
 
@@ -33,7 +32,7 @@ class articleQuery extends Query {
             return Promise.resolve()
         }
 
-        const validSortBy = Object.keys(data.articleData[0])
+        const validSortBy = ["title", "author", "article_id", "topic", "created_at", "votes", "comment_count"]
         if (this.userQuery.sort_by) {
             if (!validSortBy.includes(this.userQuery.sort_by)) return Promise.reject({status: 400, msg: "Invalid sort_by query"})
             this.psqlQuery.sort_by = ` ORDER BY ${this.userQuery.sort_by}`
