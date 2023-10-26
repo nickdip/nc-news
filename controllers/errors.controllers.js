@@ -12,4 +12,5 @@ exports.handlePSQLErrors = (err, req, res, next) => {
 
 exports.handle500Errors = (err, req, res, next) => {
     if (err) res.status(500).send({ msg: "Unhandled Error" })
+    return err
 }
